@@ -69,7 +69,7 @@ function init() {
       });
 }
 
-// Employee functions
+// Functions to view data
 
 function viewAllEmployees() {
     db.query(
@@ -82,12 +82,36 @@ function viewAllEmployees() {
       );
 }
 
+function viewAllRoles() {
+    db.query(
+        "SELECT roles.id AS id, roles.title AS title, roles.salary AS salary, departments.name AS department FROM roles JOIN departments ON roles.department_id = departments.id;",
+        function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          // init();
+        }
+      );
+}
+
+function viewAllDepartments() {
+    db.query(
+        "SELECT departments.id AS id, departments.name AS department FROM departments;",
+        function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          // init();
+        }
+      );
+}
+
 init();
 
-// viewAllEmployees();
-
-// Role functions
+// Functions to add new data 
 
 
 
-// Department functions
+// Functions to update existing data
+
+
+
+// Functions to delete existing data
