@@ -1,11 +1,22 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
-const {db} = require('./db/connection');
+// const {db} = require('./db/connection');
 // const queryFunctions = require('./db/queries');
 
+// Create connection to MySQL database
 
-// Call SQL query functions in a switch statement based on user selection
+const db = mysql.createConnection(
+  {
+    host: 'localhost',
+    user: 'root',
+    password: '88888888',
+    database: 'team_db'
+  },
+  console.log(`You are now connected to the team_db database.`)
+);
+
+// Initiate main inquirer prompts
 
 function init() {
     inquirer
@@ -62,15 +73,16 @@ function init() {
 
 function viewAllEmployees() {
     db.query(
-        "SELECT employees.id AS id, employees.first_name AS first_name, employees.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, employees.manager_id AS manager_id FROM employees JOIN roles JOIN departments ON employees.roles_id = roles.id WHERE roles.departments_id = departments.id;",
-        function (err, results) {
-          console.table(results);
+        "SELECT employees.id AS id, employees.first_name AS first_name, employees.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, employees.manager_id AS manager_id FROM employees JOIN roles JOIN departments ON employees.role_id = roles.id WHERE roles.department_id = departments.id;",
+        function (err, res) {
+          if (err) throw err;
+          console.table(res);
           // init();
         }
       );
 }
 
-// init();
+init();
 
 // viewAllEmployees();
 
