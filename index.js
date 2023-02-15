@@ -14,4 +14,54 @@ const db = mysql.createConnection(
     console.log(`You are now connected to the team_db database.`)
   );
 
-// call SQL query functions in a switch statement based on user selection
+// Call SQL query functions in a switch statement based on user selection
+
+function init() {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "home",
+            message: "What would you like to do?",
+            choices: [
+            'View All Employees',
+            'Add Employee',
+            'Update Employee Role',
+            'View All Roles',
+            'Add Role',
+            'View All Departments',
+            'Add Department',
+        ],
+      },
+    ])
+    .then((answers) => {
+        switch (answers.home) {
+          case "View All Employees":
+            viewAllEmployees();
+            break;
+          case "Add Employee":
+            addEmployee();
+            break;
+          case "Update Employee Role":
+            updateEmployeeRole();
+            break;
+          case "View All Roles":
+            viewAllRoles();
+          case "Add Role":
+            addRole();  
+          case "View All Departments":
+            viewAllDepartments();
+            break;
+          case "Add Department":
+            addRole();
+            break;
+          case "Add an Employee":
+            addEmployee();
+            break;
+          case "Update an Employee Role":
+            updateEmployeeRole();
+            break;
+          default:
+            init();  
+        }
+      });
+}
