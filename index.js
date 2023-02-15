@@ -1,11 +1,17 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
-// set up console.table
+// Connect to MySQL database
 
-// set up and connect MySQL database (change root password first)
+const db = mysql.createConnection(
+    {
+      host: 'localhost',
+      user: 'root',
+      password: '88888888',
+      database: 'team_db'
+    },
+    console.log(`You are now connected to the team_db database.`)
+  );
 
-// store SQL functions in a separate file
-
-// call them in a switch statement based on user selection
+// call SQL query functions in a switch statement based on user selection
