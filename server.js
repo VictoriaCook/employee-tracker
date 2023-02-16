@@ -317,5 +317,7 @@ function updateEmployeeRole() {
   );
 }
 
-// How to access employee id in last function? Why is it undefined?
+
+// Two questions:
+// How to access employee id in last function? Why is ${answers.employee.id} undefined?
 // Why isn't the add role function working?
