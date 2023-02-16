@@ -49,14 +49,14 @@ function init() {
           //   break;
           case "View All Roles":
             viewAllRoles();
-          // case "Add Role":
-          //   addRole();  
+          case "Add Role":
+            addRole();  
           case "View All Departments":
             viewAllDepartments();
             break;
-          // case "Add Department":
-          //   addDepartment();
-          //   break;
+          case "Add Department":
+            addDepartment();
+            break;
           // case "Add Employee":
           //   addEmployee();
           //   break;
@@ -184,11 +184,77 @@ function addEmployee() {
 };
 
 function addRole() {
+  db.query(`SELECT * FROM departments`, (err, res) => {
+    inquirer
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What is the role?",
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the salary for this role?",
+        },
+        {
+          name: "department",
+          type: "list",
+          choices: function () {
+            let choiceArr = Array.from(
+              res.map((choice) => {
+                return {
+                  name: choice.name,
+                  value: choice.id,
+                };
+              })
+            );
+            return choiceArr;
+          },
+          message: "In which department does this role sit?",
+        },
+      ])
+      .then((answers) => {
+        db.query(
+          `INSERT INTO roles(title, salary, department_id) 
+          VALUES("${answers.title}",
+          "${answers.salary}","${answers.department}");`,
+          (err, res) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log(answers);
+            // init();
+          });
+          // init();
+        });
+      });
+  };
 
-}
 
 function addDepartment() {
-
+  inquirer
+    .prompt([
+      {
+        name: "name",
+        type: "input",
+        message: "Which department would you like to add?",
+      },
+    ])
+    .then((answers) => {
+      db.query(
+        `INSERT INTO departments (name) VALUES ("${answers.name}");`,
+        (err, res) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(`You have successfully added the ${answers.name} department.`);
+          init();
+        }
+      );
+    });  
 }
 
 // Functions to update existing data
