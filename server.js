@@ -258,9 +258,7 @@ function addDepartment() {
 
 function updateEmployeeRole() {
   db.query(
-    `SELECT roles.id AS id, roles.title AS title, employees.id, employees.first_name, employees.last_name
-      FROM roles
-      JOIN employees ON roles.id = employees.role_id`,
+    `SELECT employees.id, employees.first_name, employees.last_name, roles.title AS roles, roles.id AS role_id FROM employees JOIN roles ON employees.role_id = roles.id`,
     
       (err, res) => {
       if (err) {
@@ -277,7 +275,7 @@ function updateEmployeeRole() {
               let existingEmployees = res.map((employees) => {
                 return {
                   name: `${employees.first_name} ${employees.last_name}`,
-                  value: employees.id,
+                  id: `${employees.id}`,
                 };
               });
               return existingEmployees;
@@ -288,29 +286,28 @@ function updateEmployeeRole() {
             name: "role",
             type: "list",
             choices: function () {
-              let existingRoles = res.map((role) => {
+              let existingRoles = res.map((employees) => {
                 return {
-                  name: role.title,
-                  value: role.id,
+                  name: employees.roles,
+                  value: employees.role_id,
                 };
               });
               return existingRoles;
             },
-            message: "What is the new employee's role?",
+            message: "What is the new role?",
           },
         ])
         
         .then((answers) => {
           db.query(
-            `UPDATE employees SET role_id = ? WHERE id = ?`,
-            [answers.role, answers.employee],
+            `UPDATE employees SET role_id = ${answers.role} WHERE employees.id = ${answers.employee.id}`,
             (err, res) => {
               if (err) {
                 console.log(err);
                 return;
               }
               console.log(
-                `You have successfully updated ${answers.employee}'s role to ${answers.role}.`
+                `You have successfully updated the role to ${answers.role}.`
               );
               init();
             }
@@ -319,3 +316,6 @@ function updateEmployeeRole() {
     }
   );
 }
+
+// How to access employee id in last function? Why is it undefined?
+// Why isn't the add role function working?
