@@ -44,9 +44,9 @@ function init() {
           case "Add Employee":
             addEmployee();
             break;
-          // case "Update Employee Role":
-          //   updateEmployeeRole();
-          //   break;
+          case "Update Employee Role":
+            updateEmployeeRole();
+            break;
           case "View All Roles":
             viewAllRoles();
           case "Add Role":
@@ -57,14 +57,11 @@ function init() {
           case "Add Department":
             addDepartment();
             break;
-          // case "Add Employee":
-          //   addEmployee();
-          //   break;
-          // case "Update Employee Role":
-          //   updateEmployeeRole();
-          //   break;
-          // default:
-          //   init();  
+          case "Add Employee":
+            addEmployee();
+            break;
+          default:
+            init();  
         }
       });
 }
@@ -259,6 +256,66 @@ function addDepartment() {
 
 // Functions to update existing data
 
+function updateEmployeeRole() {
+  db.query(
+    `SELECT roles.id AS id, roles.title AS title, employees.id, employees.first_name, employees.last_name
+      FROM roles
+      JOIN employees ON roles.id = employees.role_id`,
+    
+      (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
 
-
-// Functions to delete existing data
+      inquirer
+        .prompt([
+          {
+            name: "employee",
+            type: "list",
+            choices: function () {
+              let existingEmployees = res.map((employees) => {
+                return {
+                  name: `${employees.first_name} ${employees.last_name}`,
+                  value: employees.id,
+                };
+              });
+              return existingEmployees;
+            },
+            message: "Which employee would you like to update?",
+          },
+          {
+            name: "role",
+            type: "list",
+            choices: function () {
+              let existingRoles = res.map((role) => {
+                return {
+                  name: role.title,
+                  value: role.id,
+                };
+              });
+              return existingRoles;
+            },
+            message: "What is the new employee's role?",
+          },
+        ])
+        
+        .then((answers) => {
+          db.query(
+            `UPDATE employees SET role_id = ? WHERE id = ?`,
+            [answers.role, answers.employee],
+            (err, res) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+              console.log(
+                `You have successfully updated ${answers.employee}'s role to ${answers.role}.`
+              );
+              init();
+            }
+          );
+        });
+    }
+  );
+}
