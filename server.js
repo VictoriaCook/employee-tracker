@@ -44,25 +44,25 @@ function init() {
           case "Add Employee":
             addEmployee();
             break;
-          case "Update Employee Role":
-            updateEmployeeRole();
-            break;
+          // case "Update Employee Role":
+          //   updateEmployeeRole();
+          //   break;
           case "View All Roles":
             viewAllRoles();
-          case "Add Role":
-            addRole();  
+          // case "Add Role":
+          //   addRole();  
           case "View All Departments":
             viewAllDepartments();
             break;
-          case "Add Department":
-            addRole();
-            break;
-          case "Add an Employee":
-            addEmployee();
-            break;
-          case "Update an Employee Role":
-            updateEmployeeRole();
-            break;
+          // case "Add Department":
+          //   addDepartment();
+          //   break;
+          // case "Add Employee":
+          //   addEmployee();
+          //   break;
+          // case "Update Employee Role":
+          //   updateEmployeeRole();
+          //   break;
           // default:
           //   init();  
         }
@@ -77,7 +77,7 @@ function viewAllEmployees() {
         function (err, res) {
           if (err) throw err;
           console.table(res);
-          // init();
+          init();
         }
       );
 }
@@ -88,7 +88,7 @@ function viewAllRoles() {
         function (err, res) {
           if (err) throw err;
           console.table(res);
-          // init();
+          init();
         }
       );
 }
@@ -99,7 +99,7 @@ function viewAllDepartments() {
         function (err, res) {
           if (err) throw err;
           console.table(res);
-          // init();
+          init();
         }
       );
 }
@@ -108,7 +108,88 @@ init();
 
 // Functions to add new data 
 
+function addEmployee() {
+  db.query(
+    `SELECT roles.id AS id, roles.title AS title, employees.id, employees.first_name, employees.last_name
+      FROM roles
+      JOIN employees ON roles.id = employees.role_id`,
+    
+      (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
 
+      inquirer
+        .prompt([
+          {
+            name: "firstName",
+            type: "input",
+            message: "What is the employee's first name?",
+          },
+          {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?",
+          },
+          {
+            name: "role",
+            type: "list",
+            choices: function () {
+              let roleChoices = res.map((role) => {
+                return {
+                  name: role.title,
+                  value: role.id,
+                };
+              });
+              return roleChoices;
+            },
+            message: "What is the new employee's role?",
+          },
+          {
+            name: "manager",
+            type: "list",
+            choices: function () {
+              let managerChoices = res.map((employees) => {
+                return {
+                  name: `${employees.first_name} ${employees.last_name}`,
+                  value: employees.manager_id,
+                };
+              });
+              return managerChoices;
+            },
+            message: "Who is the employee's manager?",
+          },
+        ])
+        
+        .then((answers) => {
+          db.query(
+            `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+            VALUES (?, ?, ?, ?)`,
+            [answers.firstName, answers.lastName, answers.role, answers.manager],
+            (err, res) => {
+              if (err) {
+                console.log(err);
+                return;
+              }
+              console.log(
+                `You have successfully added employee: ${answers.firstName} ${answers.lastName}`
+              );
+              init();
+            }
+          );
+        });
+    }
+  );
+};
+
+function addRole() {
+
+}
+
+function addDepartment() {
+
+}
 
 // Functions to update existing data
 
