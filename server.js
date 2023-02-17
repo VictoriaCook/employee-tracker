@@ -256,68 +256,72 @@ function addDepartment() {
 
 // Functions to update existing data
 
-function updateEmployeeRole() {
-  db.query(
-    `SELECT employees.id, employees.first_name, employees.last_name, roles.title AS roles, roles.id AS role_id FROM employees JOIN roles ON employees.role_id = roles.id`,
-    
-      (err, res) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-
-      inquirer
-        .prompt([
-          {
-            name: "employee",
-            type: "list",
-            choices: function () {
-              let existingEmployees = res.map((employees) => {
-                return {
-                  name: `${employees.first_name} ${employees.last_name}`,
-                  id: `${employees.id}`,
-                };
-              });
-              return existingEmployees;
-            },
-            message: "Which employee would you like to update?",
-          },
-          {
-            name: "role",
-            type: "list",
-            choices: function () {
-              let existingRoles = res.map((employees) => {
-                return {
-                  name: employees.roles,
-                  value: employees.role_id,
-                };
-              });
-              return existingRoles;
-            },
-            message: "What is the new role?",
-          },
-        ])
-        
-        .then((answers) => {
-          db.query(
-            `UPDATE employees SET role_id = ${answers.role} WHERE employees.id = ${answers.employee.id}`,
-            (err, res) => {
-              if (err) {
-                console.log(err);
-                return;
-              }
-              console.log(
-                `You have successfully updated the role to ${answers.role}.`
-              );
-              init();
-            }
-          );
-        });
+async function updateEmployeeRole() {
+	
+	//retrieve existing employee array from db
+	const employees = await db.promise().query(
+    "SELECT employees.id AS id, employees.first_name AS first_name, employees.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, employees.manager_id AS manager_id FROM employees JOIN roles JOIN departments ON employees.role_id = roles.id WHERE roles.department_id = departments.id;",
+    );
+	// console.log("-----------------------")
+	// console.log(employees);
+	// console.log("-------------------------")
+  
+	//map db return to an array of objects
+	const employeeChoices = employees[0].map((employee) => {
+		return {
+			name: `${employee.first_name} ${employee.last_name}`,
+			value: employee.id
+		}}); 
+    // console.log("-----------------------")
+    // console.log(employeeChoices);
+    // console.log("-------------------------")
+	
+  //inquirer prompt for user to select specific employee
+	const selectedEmployee = await inquirer.prompt([
+		{
+      name: 'chosenEmployee', 		
+      type: 'list',
+      choices: employeeChoices,
+      message: "Which employee's role would you like to update?",
     }
+  ]);
+  
+	//retrieve existing roles array from db
+	const roles = await db.promise().query(
+    "SELECT roles.id AS id, roles.title AS title, roles.salary AS salary, departments.name AS department FROM roles JOIN departments ON roles.department_id = departments.id;",
   );
-}
+  
+	// //map db return to an array of objects
+
+  const roleChoices = roles[0].map((role) => {
+		return {
+			name: role.title,
+			value: role.id
+		}}); 
 
 
-// Two questions:
-// How to access employee id in last function? Why is ${answers.employee.id} undefined?
-// Why isn't the add role function working?
+	//inquirer question for user to select specific role
+  const selectedRole = await inquirer.prompt([
+		{
+      name: 'chosenRole', 		
+      type: 'list',
+      choices: roleChoices,
+      message: "What is the new role for this employee?",
+    }
+  ]);
+
+  //update db with new employee role
+  // console.log('---------')
+  // console.log(selectedRole.chosenRole)
+  // console.log(selectedEmployee.chosenEmployee)
+  // console.log('---------')
+
+	await db.promise().query(
+    `UPDATE employees SET role_id = ${selectedRole.chosenRole} WHERE employees.id = ${selectedEmployee.chosenEmployee}`,)
+  
+  //identify role name based on role id and store in variable
+
+  // const chosenRoleName = await db.promise().query(`SELECT roles.title FROM roles WHERE roles.id = ${selectedEmployee.chosenEmployee}`);
+
+  console.log(`You have successfully updated the role.`);
+};
