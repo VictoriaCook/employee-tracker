@@ -272,9 +272,9 @@ async function updateEmployeeRole() {
 			name: `${employee.first_name} ${employee.last_name}`,
 			value: employee.id
 		}}); 
-    console.log("-----------------------")
-    console.log(employeeChoices);
-    console.log("-------------------------")
+    // console.log("-----------------------")
+    // console.log(employeeChoices);
+    // console.log("-------------------------")
 	
   //inquirer prompt for user to select specific employee
 	const selectedEmployee = await inquirer.prompt([
@@ -285,23 +285,43 @@ async function updateEmployeeRole() {
       message: "Which employee's role would you like to update?",
     }
   ]);
-  }
-	// //retrieve existing roles array from db
-	// const roles = await db.query();
-
+  
+	//retrieve existing roles array from db
+	const roles = await db.promise().query(
+    "SELECT roles.id AS id, roles.title AS title, roles.salary AS salary, departments.name AS department FROM roles JOIN departments ON roles.department_id = departments.id;",
+  );
+  
 	// //map db return to an array of objects
-	// const roleChoices = roles[0].map((role) => 
-  //   return {
-  //     name: role.title,
-  //     value: role.id
-  //   }); 
 
-	// //inquirer question for user to select specific role
-	// const selectedRole = await prompt([
-	// 			choices: roleChoices
-	// 	])
+  const roleChoices = roles[0].map((role) => {
+		return {
+			name: role.title,
+			value: role.id
+		}}); 
 
-  // //update db with new employee role
 
-	// await db.query()
+	//inquirer question for user to select specific role
+  const selectedRole = await inquirer.prompt([
+		{
+      name: 'chosenRole', 		
+      type: 'list',
+      choices: roleChoices,
+      message: "What is the new role for this employee?",
+    }
+  ]);
 
+  //update db with new employee role
+  // console.log('---------')
+  // console.log(selectedRole.chosenRole)
+  // console.log(selectedEmployee.chosenEmployee)
+  // console.log('---------')
+
+	await db.promise().query(
+    `UPDATE employees SET role_id = ${selectedRole.chosenRole} WHERE employees.id = ${selectedEmployee.chosenEmployee}`,)
+  
+  //identify role name based on role id and store in variable
+
+  // const chosenRoleName = await db.promise().query(`SELECT roles.title FROM roles WHERE roles.id = ${selectedEmployee.chosenEmployee}`);
+
+  console.log(`You have successfully updated the role.`);
+};
