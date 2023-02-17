@@ -258,25 +258,19 @@ function addDepartment() {
 
 async function updateEmployeeRole() {
 	
-	//retrieve existing employee array from db
+	// retrieve existing employee array from db
 	const employees = await db.promise().query(
     "SELECT employees.id AS id, employees.first_name AS first_name, employees.last_name AS last_name, roles.title AS title, departments.name AS department, roles.salary AS salary, employees.manager_id AS manager_id FROM employees JOIN roles JOIN departments ON employees.role_id = roles.id WHERE roles.department_id = departments.id;",
     );
-	// console.log("-----------------------")
-	// console.log(employees);
-	// console.log("-------------------------")
   
-	//map db return to an array of objects
+	// map db return to an array of objects
 	const employeeChoices = employees[0].map((employee) => {
 		return {
 			name: `${employee.first_name} ${employee.last_name}`,
 			value: employee.id
 		}}); 
-    // console.log("-----------------------")
-    // console.log(employeeChoices);
-    // console.log("-------------------------")
 	
-  //inquirer prompt for user to select specific employee
+  // inquirer prompt for user to select specific employee
 	const selectedEmployee = await inquirer.prompt([
 		{
       name: 'chosenEmployee', 		
@@ -286,12 +280,12 @@ async function updateEmployeeRole() {
     }
   ]);
   
-	//retrieve existing roles array from db
+	// retrieve existing roles array from db
 	const roles = await db.promise().query(
     "SELECT roles.id AS id, roles.title AS title, roles.salary AS salary, departments.name AS department FROM roles JOIN departments ON roles.department_id = departments.id;",
   );
   
-	// //map db return to an array of objects
+	// map db return to an array of objects
 
   const roleChoices = roles[0].map((role) => {
 		return {
@@ -300,7 +294,7 @@ async function updateEmployeeRole() {
 		}}); 
 
 
-	//inquirer question for user to select specific role
+	// inquirer question for user to select specific role
   const selectedRole = await inquirer.prompt([
 		{
       name: 'chosenRole', 		
@@ -310,18 +304,13 @@ async function updateEmployeeRole() {
     }
   ]);
 
-  //update db with new employee role
-  // console.log('---------')
-  // console.log(selectedRole.chosenRole)
-  // console.log(selectedEmployee.chosenEmployee)
-  // console.log('---------')
-
+  // update db with new employee role
+  
 	await db.promise().query(
     `UPDATE employees SET role_id = ${selectedRole.chosenRole} WHERE employees.id = ${selectedEmployee.chosenEmployee}`,)
-  
-  //identify role name based on role id and store in variable
-
-  // const chosenRoleName = await db.promise().query(`SELECT roles.title FROM roles WHERE roles.id = ${selectedEmployee.chosenEmployee}`);
 
   console.log(`You have successfully updated the role.`);
+
+  // return to main menu
+  init();
 };
