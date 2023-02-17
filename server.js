@@ -275,12 +275,17 @@ async function updateEmployeeRole() {
     console.log("-----------------------")
     console.log(employeeChoices);
     console.log("-------------------------")
+	
+  //inquirer prompt for user to select specific employee
+	const selectedEmployee = await inquirer.prompt([
+		{
+      name: 'chosenEmployee', 		
+      type: 'list',
+      choices: employeeChoices,
+      message: "Which employee's role would you like to update?",
+    }
+  ]);
   }
-	// //inquirer prompt for user to select specific employee
-	// const selectedEmployee = await prompt([
-	// 			choices: employeechoices
-	// 	])
-
 	// //retrieve existing roles array from db
 	// const roles = await db.query();
 
@@ -295,6 +300,8 @@ async function updateEmployeeRole() {
 	// const selectedRole = await prompt([
 	// 			choices: roleChoices
 	// 	])
+
+  // //update db with new employee role
 
 	// await db.query()
 
