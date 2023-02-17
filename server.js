@@ -180,53 +180,9 @@ function addEmployee() {
   );
 };
 
-function addRole() {
-  db.query(`SELECT * FROM departments`, (err, res) => {
-    inquirer
-      .prompt([
-        {
-          name: "title",
-          type: "input",
-          message: "What is the role?",
-        },
-        {
-          name: "salary",
-          type: "input",
-          message: "What is the salary for this role?",
-        },
-        {
-          name: "department",
-          type: "list",
-          choices: function () {
-            let choiceArr = Array.from(
-              res.map((choice) => {
-                return {
-                  name: choice.name,
-                  value: choice.id,
-                };
-              })
-            );
-            return choiceArr;
-          },
-          message: "In which department does this role sit?",
-        },
-      ])
-      .then((answers) => {
-        db.query(
-          `INSERT INTO roles(title, salary, department_id) 
-          VALUES("${answers.title}",
-          "${answers.salary}","${answers.department}");`,
-          (err, res) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log(answers);
-            // init();
-          });
-          // init();
-        });
-      });
+async function addRole() {
+  // await inquirer prompt to ask what role to add
+  // db.query to add role to db
   };
 
 
