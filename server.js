@@ -1,8 +1,6 @@
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 const mysql = require('mysql2');
-// const {db} = require('./db/connection');
-// const queryFunctions = require('./db/queries');
 
 // Create connection to MySQL database
 
@@ -66,6 +64,7 @@ function init() {
       });
 }
 
+
 // Functions to view data
 
 function viewAllEmployees() {
@@ -101,7 +100,6 @@ function viewAllDepartments() {
       );
 }
 
-init();
 
 // Functions to add new data 
 
@@ -226,6 +224,7 @@ function addDepartment() {
     });  
 }
 
+
 // Functions to update existing data
 
 async function updateEmployeeRole() {
@@ -286,3 +285,5 @@ async function updateEmployeeRole() {
   // return to main menu
   init();
 };
+
+init();
