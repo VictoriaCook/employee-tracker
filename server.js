@@ -181,9 +181,25 @@ function addEmployee() {
 };
 
 async function addRole() {
-  // await inquirer prompt to ask what role to add
-  // db.query to add role to db
-  };
+  
+  // inquirer prompt for user to input new role
+	const newRole = await inquirer.prompt([
+		{
+      name: 'newRole', 		
+      type: 'input',
+      message: "What role would you like to add?",
+    }
+  ]);
+
+  // update db with new role
+	await db.promise().query(
+    `INSERT INTO roles (title) VALUES ("${newRole}")`,)
+
+  console.log(`You have successfully added a new role.`);
+
+  // return to main menu
+  init();
+};
 
 
 function addDepartment() {
