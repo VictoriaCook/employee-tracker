@@ -47,8 +47,10 @@ function init() {
             break;
           case "View All Roles":
             viewAllRoles();
+            break;
           case "Add Role":
-            addRole();  
+            addRole();
+            break;  
           case "View All Departments":
             viewAllDepartments();
             break;
@@ -183,17 +185,26 @@ async function addRole() {
   // inquirer prompt for user to input new role
 	const newRole = await inquirer.prompt([
 		{
-      name: 'newRole', 		
+      name: 'newTitle', 		
       type: 'input',
       message: "What role would you like to add?",
+    },
+    {
+      name: "newSalary",
+      type: "input",
+      message: "What is the salary for this role?",
     }
   ]);
 
+  // destructure answers?
+  console.log(newRole)
+  console.log(newRole.newTitle)
+
   // update db with new role
 	await db.promise().query(
-    `INSERT INTO roles (title) VALUES ("${newRole}")`,)
+    `INSERT INTO roles (title, salary) VALUES ("${newRole.newTitle}", "${newRole.newSalary}");`)
 
-  console.log(`You have successfully added a new role.`);
+  console.log(`You have successfully added a new role and corresponding salary.`);
 
   // return to main menu
   init();
