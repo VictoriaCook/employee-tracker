@@ -26,4 +26,4 @@ VALUES (1, 'John', 'Doe', 1, null),
         (7, 'Sarah', 'Lourd', 7, null),
         (8, 'Tom', 'Allen', 8, 7);
 
-SELECT * FROM employees;
+SELECT * FROM roles;
