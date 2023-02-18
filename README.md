@@ -10,8 +10,9 @@ The user is presented with a series of prompts to view, update or add employee d
 To start the application, please complete the following steps:
 
 1. Run npm install
-2. Run npm start 
-3. Follow the prompts
+2. Seed data 
+3. Run npm start 
+4. Follow the prompts
 
 ## Video walkthrough
 
