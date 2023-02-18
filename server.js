@@ -196,10 +196,6 @@ async function addRole() {
     }
   ]);
 
-  // destructure answers?
-  console.log(newRole)
-  console.log(newRole.newTitle)
-
   // update db with new role
 	await db.promise().query(
     `INSERT INTO roles (title, salary) VALUES ("${newRole.newTitle}", "${newRole.newSalary}");`)
